@@ -1,0 +1,26 @@
+{
+  "name": "puppeteer-page-walker",
+  "version": "1.0.0",
+  "description": "puppeteer wrapper library for 'humane' scraping",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YusukeIwaki/puppeteer-page-walker.git"
+  },
+  "keywords": [
+    "puppeteer",
+    "crawling"
+  ],
+  "author": "YusukeIwaki",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/YusukeIwaki/puppeteer-page-walker/issues"
+  },
+  "homepage": "https://github.com/YusukeIwaki/puppeteer-page-walker#readme",
+  "dependencies": {
+    "puppeteer": "^1.5.0"
+  }
+}
