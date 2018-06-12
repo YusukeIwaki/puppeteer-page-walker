@@ -86,7 +86,10 @@ class PageWalker {
             }
             return await asyncHandler(target);
         } catch (e) {
-            return false;
+            if (this._isUnavoidableProtocolError(e)) {
+                return false;
+            }
+            throw e;
         }
     }
 
@@ -95,8 +98,20 @@ class PageWalker {
             const readyState = await page.evaluate(() => document.readyState);
             return readyState == "interactive" || readyState == "complete";
         } catch (e) {
-            return false;
+            if (this._isUnavoidableProtocolError(e)) {
+                return false;
+            }
+            throw e;
         }
+    }
+
+    _isUnavoidableProtocolError(e) {
+        if (e instanceof Error) {
+            if (e.message.match(/^Protocol error.*(Cannot find context with specified id undefined|Target closed)/)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     async _handleTargetAsync(target) {
