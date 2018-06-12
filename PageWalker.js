@@ -42,8 +42,8 @@ class PageWalker {
         return this;
     }
 
-    async startWalking() {
-        const browser = await puppeteer.launch();
+    async startWalking(puppeteerLaunchOptions) {
+        const browser = await puppeteer.launch(puppeteerLaunchOptions);
         const asyncHandler = async (target) => {
             await this._onDomReady((target) => this._handleTargetAsync(target), target);
             return true;
