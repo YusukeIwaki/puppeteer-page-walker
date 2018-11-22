@@ -9,7 +9,7 @@ class PageWalker {
         return async (page, self) => {
             const result = await asyncHandler(page, self);
             if (typeof result == "undefined") {
-                return true
+                return true;
             } else {
                 return result;
             }
@@ -108,6 +108,9 @@ class PageWalker {
     _isUnavoidableProtocolError(e) {
         if (e instanceof Error) {
             if (e.message.match(/^Protocol error.*(Cannot find context with specified id undefined|Target closed)/)) {
+                return true;
+            }
+            if (e.message == 'Execution context was destroyed, most likely because of a navigation.') {
                 return true;
             }
         }
