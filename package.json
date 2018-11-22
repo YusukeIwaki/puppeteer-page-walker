@@ -1,6 +1,6 @@
 {
   "name": "puppeteer-page-walker",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "puppeteer wrapper library for 'humane' scraping",
   "main": "index.js",
   "scripts": {
