@@ -50,6 +50,10 @@ class PageWalker {
         }
         return this;
     }
+    setRouter(router) {
+        this.router = router;
+        return this;
+    }
     startWalking(puppeteerLaunchOptions) {
         return __awaiter(this, void 0, void 0, function* () {
             const browser = yield puppeteer.launch(puppeteerLaunchOptions);
@@ -152,6 +156,9 @@ class PageWalker {
             else {
                 this.prevUrl = url;
                 this.prevTime = curTime;
+            }
+            if (this.router != null) {
+                return yield this.router.handle(url, page, this);
             }
             for (let i = 0; i < this.handlers.length; i++) {
                 if (yield this.handlers[i](url, page, this)) {

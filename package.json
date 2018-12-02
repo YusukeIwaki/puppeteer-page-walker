@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/YusukeIwaki/puppeteer-page-walker#readme",
   "dependencies": {
+    "nano_router.js": "^1.0.2",
     "puppeteer": "^1.11.0"
   },
   "devDependencies": {

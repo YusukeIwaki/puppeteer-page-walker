@@ -1,4 +1,5 @@
 import * as puppeteer from "puppeteer";
+import Router = require("nano_router.js");
 
 namespace PageWalker {
     export interface PageWalkingHandler {
@@ -23,6 +24,7 @@ interface InternalTargetHandler {
 }
 
 class PageWalker {
+    private router: Router<any>;
     private handlers: Array<InternaUrlHandler>;
     private initFunc: InternalPageWalkingHandler;
     private closeBrowserFunc: () => Promise<void>; 
@@ -67,6 +69,11 @@ class PageWalker {
         } else {
             throw new TypeError("urlOrCondition should be string or function");
         }
+        return this;
+    }
+
+    setRouter(router: Router<any>): PageWalker {
+        this.router = router;
         return this;
     }
 
@@ -172,6 +179,9 @@ class PageWalker {
         } else {
             this.prevUrl = url;
             this.prevTime = curTime;
+        }
+        if (this.router != null) {
+            return await this.router.handle(url, page, this);
         }
         for (let i = 0; i < this.handlers.length; i++) {
             if (await this.handlers[i](url, page, this)) {
