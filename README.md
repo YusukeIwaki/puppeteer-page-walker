@@ -17,7 +17,7 @@ const PageWalker = require("puppeteer-page-walker");
 new PageWalker()
     .initWith(async (page, walker) => {
         await page.setViewport({width:1200, height:480})
-        await page.goto("https://github.com/");
+        await page.goto("https://github.com/", {"waitUntil": "domcontentloaded"});
     })
     .andIf(url => true, (page) => {
         console.log(">", page.url());
