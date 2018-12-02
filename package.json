@@ -4,6 +4,7 @@
   "description": "puppeteer wrapper library for 'humane' scraping",
   "main": "index.js",
   "scripts": {
+    "compile": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,6 +22,11 @@
   },
   "homepage": "https://github.com/YusukeIwaki/puppeteer-page-walker#readme",
   "dependencies": {
-    "puppeteer": "^1.5.0"
+    "puppeteer": "^1.11.0"
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.11",
+    "@types/puppeteer": "^1.10.1",
+    "typescript": "^3.2.1"
   }
 }

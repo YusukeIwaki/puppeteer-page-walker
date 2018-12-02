@@ -1,111 +1,128 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 const puppeteer = require("puppeteer");
-
 class PageWalker {
     constructor() {
-        this._asyncHandlers = [];
+        this.handlers = [];
     }
-
-    _wrap(asyncHandler) {
-        return async (page, self) => {
-            const result = await asyncHandler(page, self);
+    wrapHandler(handler) {
+        return (page, self) => __awaiter(this, void 0, void 0, function* () {
+            const result = yield handler(page, self);
             if (typeof result == "undefined") {
                 return true;
-            } else {
+            }
+            else {
                 return result;
             }
-        }
+        });
     }
-
-    initWith(asyncHandler) {
-        this._init = this._wrap(asyncHandler);
+    initWith(handler) {
+        this.initFunc = this.wrapHandler(handler);
         return this;
     }
-
-    andIf(urlOrCondition, asyncHandler) {
+    andIf(urlOrCondition, handler) {
         if (typeof urlOrCondition == "string") {
-            this._asyncHandlers.push(async (url, page, self) => {
+            this.handlers.push((url, page, self) => __awaiter(this, void 0, void 0, function* () {
                 if (url == urlOrCondition) {
-                    return await this._wrap(asyncHandler)(page, self);
+                    return yield this.wrapHandler(handler)(page, self);
                 }
                 return false;
-            });
-        } else if (typeof urlOrCondition == "function") {
-            this._asyncHandlers.push(async (url, page, self) => {
+            }));
+        }
+        else if (typeof urlOrCondition == "function") {
+            this.handlers.push((url, page, self) => __awaiter(this, void 0, void 0, function* () {
                 if (urlOrCondition(url)) {
-                    return await this._wrap(asyncHandler)(page, self);
+                    return yield this.wrapHandler(handler)(page, self);
                 }
                 return false;
-            })
-        } else {
+            }));
+        }
+        else {
             throw new TypeError("urlOrCondition should be string or function");
         }
         return this;
     }
-
-    async startWalking(puppeteerLaunchOptions) {
-        const browser = await puppeteer.launch(puppeteerLaunchOptions);
-        const asyncHandler = async (target) => {
-            await this._onDomReady((target) => this._handleTargetAsync(target), target);
-            return true;
-        };
-        browser.on("targetcreated", asyncHandler);
-        browser.on("targetchanged", asyncHandler);
-
-        // Since finish() can be called in init, _closedBrowser should be defined in advance.
-        let closed = false;
-        this._closeBrowser = async () => {
-            closed = true;
-            await browser.close();
-        }
-        await this._init(await browser.newPage(), this);
-
-        if (!closed) {
-            await new Promise((resolve, reject) => {
-                this._closeBrowser = async () => {
-                    await browser.close();
-                }
+    startWalking(puppeteerLaunchOptions) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const browser = yield puppeteer.launch(puppeteerLaunchOptions);
+            const asyncHandler = (target) => __awaiter(this, void 0, void 0, function* () {
+                yield this.onDomReady((target) => this.handleTargetAsync(target), target);
+                return true;
             });
-        }
-        return this;
-    }
-
-    async finish() {
-        await this._closeBrowser();
-    }
-
-    async _onDomReady(asyncHandler, target) {
-        const page = await target.page();
-        if (!page) {
-            return false;
-        }
-        try {
-            if (!(await this._isDomReady(page))) {
-                await new Promise((resolve, reject) => {
-                    page.once("domcontentloaded", resolve);
+            browser.on("targetcreated", asyncHandler);
+            browser.on("targetchanged", asyncHandler);
+            let closed = false;
+            this.closeBrowserFunc = () => __awaiter(this, void 0, void 0, function* () {
+                closed = true;
+                yield browser.close();
+            });
+            const initFuncPromise = this.initFunc(yield browser.newPage(), this);
+            if (!closed) {
+                yield new Promise((resolve, reject) => {
+                    this.closeBrowserFunc = () => __awaiter(this, void 0, void 0, function* () {
+                        yield browser.close();
+                        resolve();
+                    });
                 });
             }
-            return await asyncHandler(target);
-        } catch (e) {
-            if (this._isUnavoidableProtocolError(e)) {
+            try {
+                yield initFuncPromise;
+            }
+            catch (e) {
+            }
+            return this;
+        });
+    }
+    finish() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.closeBrowserFunc();
+        });
+    }
+    onDomReady(targetHandler, target) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const page = yield target.page();
+            if (!page) {
                 return false;
             }
-            throw e;
-        }
-    }
-
-    async _isDomReady(page) {
-        try {
-            const readyState = await page.evaluate(() => document.readyState);
-            return readyState == "interactive" || readyState == "complete";
-        } catch (e) {
-            if (this._isUnavoidableProtocolError(e)) {
-                return false;
+            try {
+                if (!(yield this.isDomReady(page))) {
+                    yield new Promise((resolve, reject) => {
+                        page.once("domcontentloaded", resolve);
+                    });
+                }
+                return yield targetHandler(target);
             }
-            throw e;
-        }
+            catch (e) {
+                if (this.isUnavoidableProtocolError(e)) {
+                    return false;
+                }
+                throw e;
+            }
+        });
     }
-
-    _isUnavoidableProtocolError(e) {
+    isDomReady(page) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const readyState = yield page.evaluate(() => document.readyState);
+                return readyState == "interactive" || readyState == "complete";
+            }
+            catch (e) {
+                if (this.isUnavoidableProtocolError(e)) {
+                    return false;
+                }
+                throw e;
+            }
+        });
+    }
+    isUnavoidableProtocolError(e) {
         if (e instanceof Error) {
             if (e.message.match(/^Protocol error.*(Cannot find context with specified id undefined|Target closed)/)) {
                 return true;
@@ -116,31 +133,34 @@ class PageWalker {
         }
         return false;
     }
-
-    async _handleTargetAsync(target) {
-        const url = target.url();
-        const page = await target.page();
-        if (url && page) {
-            return await this._handlePageAsync(url, page);
-        }
-        return false;
-    }
-
-    async _handlePageAsync(url, page) {
-        const curTime = new Date() - 0;
-        if (this._prevUrl && this._prevUrl == url && curTime - this._prevTime < 1000) {
-            return false;
-        } else {
-            this._prevUrl = url;
-            this._prevTime = curTime;
-        }
-        for (let i = 0; i < this._asyncHandlers.length; i++) {
-            if (await this._asyncHandlers[i](url, page, this)) {
-                return true;
+    handleTargetAsync(target) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const url = target.url();
+            const page = yield target.page();
+            if (url && page) {
+                return yield this.handlePageAsync(url, page);
             }
-        }
-        return false;
+            return false;
+        });
+    }
+    handlePageAsync(url, page) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const curTime = new Date().getTime();
+            if (this.prevUrl && this.prevUrl == url && curTime - this.prevTime < 1000) {
+                return false;
+            }
+            else {
+                this.prevUrl = url;
+                this.prevTime = curTime;
+            }
+            for (let i = 0; i < this.handlers.length; i++) {
+                if (yield this.handlers[i](url, page, this)) {
+                    return true;
+                }
+            }
+            return false;
+        });
     }
 }
-
 module.exports = PageWalker;
+//# sourceMappingURL=PageWalker.js.map

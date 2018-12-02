@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "lib": ["dom", "es6"],
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "noImplicitReturns": true,
+        "removeComments": true,
+        "sourceMap": true,
+        "strictNullChecks": true,
+        "target": "es6"
+    },
+    "files": [
+        "PageWalker.ts"
+    ]
+}
