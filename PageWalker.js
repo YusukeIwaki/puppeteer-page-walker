@@ -42,10 +42,6 @@ class PageWalker {
         }
         return this;
     }
-    setRouter(router) {
-        this.router = router;
-        return this;
-    }
     async startWalking(puppeteerLaunchOptions) {
         const browser = await puppeteer.launch(puppeteerLaunchOptions);
         const asyncHandler = async (target) => {
@@ -137,9 +133,6 @@ class PageWalker {
         else {
             this.prevUrl = url;
             this.prevTime = curTime;
-        }
-        if (this.router != null) {
-            return await this.router.handle(url, page, this);
         }
         for (let i = 0; i < this.handlers.length; i++) {
             if (await this.handlers[i](url, page, this)) {
