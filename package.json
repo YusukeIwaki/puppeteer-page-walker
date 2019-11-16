@@ -1,6 +1,6 @@
 {
   "name": "puppeteer-page-walker",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "puppeteer wrapper library for 'humane' scraping",
   "main": "index.js",
   "scripts": {
@@ -22,12 +22,12 @@
   },
   "homepage": "https://github.com/YusukeIwaki/puppeteer-page-walker#readme",
   "dependencies": {
-    "nano_router.js": "^1.0.2",
-    "puppeteer": "^1.11.0"
+    "puppeteer-core": "^2.0.0"
   },
   "devDependencies": {
-    "@types/node": "^10.12.11",
-    "@types/puppeteer": "^1.10.1",
-    "typescript": "^3.2.1"
+    "puppeteer": "^2.0.0",
+    "@types/node": "^12.12.8",
+    "@types/puppeteer": "^1.20.2",
+    "typescript": "^3.7.2"
   }
 }

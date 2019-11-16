@@ -5,7 +5,7 @@ A wrapper library of [puppeteer](https://github.com/GoogleChrome/puppeteer) for 
 ## Install
 
 ```
-npm install puppeteer-page-walker
+yarn add puppeteer puppeteer-page-walker
 ```
 
 ## Enjoy
