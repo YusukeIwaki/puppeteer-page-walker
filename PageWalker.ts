@@ -1,4 +1,4 @@
-import * as puppeteer from "puppeteer";
+import * as puppeteer from "puppeteer-core";
 
 namespace PageWalker {
     export interface PageWalkingHandler {
@@ -49,7 +49,7 @@ class PageWalker {
         return this;
     }
 
-    andIf(urlOrCondition: string|PageWalker.UrlFilter, handler: PageWalker.PageWalkingHandler): PageWalker {
+    andIf(urlOrCondition: string | PageWalker.UrlFilter, handler: PageWalker.PageWalkingHandler): PageWalker {
         if (typeof urlOrCondition == "string") {
             this.handlers.push(async (url: string, page: puppeteer.Page, self: PageWalker) => {
                 if (url == urlOrCondition) {
